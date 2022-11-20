@@ -93,6 +93,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "userEmail": userEmail,
       "userName": userName,
       "userAge": userAge,
+      "stars": 0,
+      "songs_count": 0,
+      "rating": 0
     });
   }
 

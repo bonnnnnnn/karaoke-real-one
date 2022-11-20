@@ -59,7 +59,7 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
       body: getBody(),
     );
   }
- AppBar getAppBar() {
+  AppBar getAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.black,
@@ -78,10 +78,10 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
       title: Padding(
         padding: const EdgeInsets.only(left: 0, right: 0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "ARE LISTENING - " + widget.title,
+              "NOW LISTENING",
               style: TextStyle(
                   fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
             ),
@@ -91,6 +91,7 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
       ),
     );
   }
+
   var playing = false;
 
   Widget getBody(){

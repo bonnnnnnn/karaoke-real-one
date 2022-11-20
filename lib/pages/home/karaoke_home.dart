@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/json/songs_json.dart';
-import 'forListening/album_page.dart';
-import 'forListening/test_songlist.dart';
+import 'package:karaoke_real_one/pages/home/listen_and_record/album_page.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 class HomePage extends StatefulWidget {
+  final List userData;
+
+  const HomePage({
+    Key? key,
+    required this.userData
+    }) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int activeMenu1 = 0;
-  int activeMenu2 = 2;
+  int activeMenu2 = 0;
+  int activeMenu3 = 0;
+  int activeMenu4 = 0;
 
   List listsong = [];
 
   static Future<List> getSonglist(List listsong, String songname) async{
-    return await showListSong().loadsong(listsong, songname);
+    return await fb_connect().loadSong(listsong, songname);
   }
 
   @override
@@ -122,6 +130,8 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.bottomCenter,
                                     child: AlbumPage(
                                       song: songs[index],
+                                      userData: widget.userData,
+                                      index: index,
                                     ),
                                     type: PageTransitionType.scale));
                           },
@@ -242,6 +252,8 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.bottomCenter,
                                     child: AlbumPage(
                                       song: songs[index + 5],
+                                      userData: widget.userData,
+                                      index: index + 5,
                                     ),
                                     type: PageTransitionType.scale));
                           },
@@ -307,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            activeMenu1 = index;
+                            activeMenu3 = index;
                           });
                         },
                         child: Column(
@@ -317,13 +329,13 @@ class _HomePageState extends State<HomePage> {
                               song_type_1[index],
                               style: TextStyle(
                                   fontSize: 15,
-                                  color: activeMenu1 == index ? Colors.green : Colors.grey,
+                                  color: activeMenu3 == index ? Colors.green : Colors.grey,
                                   fontWeight: FontWeight.w600),
                             ),
                             SizedBox(
                               height: 3,
                             ),
-                            activeMenu1 == index
+                            activeMenu3 == index
                                 ? Container(
                                     width: 10,
                                     height: 3,
@@ -359,7 +371,9 @@ class _HomePageState extends State<HomePage> {
                                 PageTransition(
                                     alignment: Alignment.bottomCenter,
                                     child: AlbumPage(
-                                      song: songs[index+10],
+                                      song: songs[index + 10],
+                                      userData: widget.userData,
+                                      index: index + 10,
                                     ),
                                     type: PageTransitionType.scale));
                           },
@@ -427,7 +441,7 @@ class _HomePageState extends State<HomePage> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            activeMenu2 = index;
+                            activeMenu4 = index;
                           });
                         },
                         child: Column(
@@ -437,13 +451,13 @@ class _HomePageState extends State<HomePage> {
                               song_type_2[index],
                               style: TextStyle(
                                   fontSize: 15,
-                                  color: activeMenu2 == index ? Colors.green : Colors.grey,
+                                  color: activeMenu4 == index ? Colors.green : Colors.grey,
                                   fontWeight: FontWeight.w600),
                             ),
                             SizedBox(
                               height: 3,
                             ),
-                            activeMenu2 == index
+                            activeMenu4 == index
                                 ? Container(
                                     width: 10,
                                     height: 3,
@@ -480,6 +494,8 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.bottomCenter,
                                     child: AlbumPage(
                                       song: songs[index + 15],
+                                      userData: widget.userData,
+                                      index: index + 15,
                                     ),
                                     type: PageTransitionType.scale));
                           },

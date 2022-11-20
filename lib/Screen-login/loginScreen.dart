@@ -6,7 +6,7 @@ import 'package:karaoke_real_one/main.dart';
 import '/Screen-login/registerScreen.dart';
 import '/Screen-login/resetScreen.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:karaoke_real_one/pages/forListening/test_songlist.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
       RoundedLoadingButtonController();
 
   Future loaduser(String userUID) async {
-    List tempData = await showListSong().loaduser(userUID);
+    List tempData = await fb_connect().loadUser(userUID);
     setState(() {
       userData = tempData;
     });

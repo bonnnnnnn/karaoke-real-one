@@ -1,10 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 
-class showListSong {
+class fb_connect {
 
-  Future loadsong(List listsong, String songname) async {
+  Future loadSong(List listsong, String songname) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child("Songs/"+songname).orderByKey().get();
+    final snapshot = await ref.child("Songs").orderByChild("title").equalTo(songname).get();
     if (snapshot.exists) {
       for(final key in snapshot.children){
         listsong.add(key.value);
@@ -14,7 +14,7 @@ class showListSong {
     return listsong;
   }
 
-  Future loaduser(String userUID) async {
+  Future loadUser(String userUID) async {
     List userData = [];
     DatabaseReference ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child("Users/"+userUID).get();
@@ -25,10 +25,10 @@ class showListSong {
     return userData;
   }
 
-  Future loadranking() async {
+  Future loadRanking() async {
     List usersranking = [];
     DatabaseReference ref = FirebaseDatabase.instance.ref();
-    final snapshot = await ref.child("Users").orderByChild("userAge").get();
+    final snapshot = await ref.child("Users").orderByChild("stars").get();
     if (snapshot.exists) {
       for(final key in snapshot.children){
         usersranking.add(key.value);
@@ -36,6 +36,19 @@ class showListSong {
     }
     Future.delayed(const Duration(seconds: 1), () => "1");
     return usersranking;
+  }
+
+  Future fetchingSongList(String userName) async {
+    List listSong = [];
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child("Songs").orderByChild("userName").equalTo(userName).get();
+    if(snapshot.exists){
+      for(final key in snapshot.children){
+        listSong.add(key.value);
+      }
+    }
+    Future.delayed(const Duration(seconds: 1), () => "1");
+    return listSong;
   }
 
   void writeData() async {
@@ -48,5 +61,4 @@ class showListSong {
       }
     });
   }
-
 }

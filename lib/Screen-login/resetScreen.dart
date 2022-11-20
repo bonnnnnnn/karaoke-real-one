@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_awesome_buttons/flutter_awesome_buttons.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'loginScreen.dart';
 

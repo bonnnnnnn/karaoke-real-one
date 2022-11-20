@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'music_detail_page.dart';
+import 'package:karaoke_real_one/pages/home/listen_and_record/music_detail_page.dart';
+import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_singing.dart';
 
 class AlbumPage extends StatefulWidget {
   final dynamic song;
+  final List userData;
+  final int index;
 
-  const AlbumPage({Key? key, required this.song}) : super(key: key);
+  const AlbumPage({
+    Key? key, 
+    required this.song,
+    required this.userData,
+    required this.index
+    }) : super(key: key);
   @override
   _AlbumPageState createState() => _AlbumPageState();
 }
@@ -54,11 +62,50 @@ class _AlbumPageState extends State<AlbumPage> {
                           color: Colors.grey, borderRadius: BorderRadius.circular(5)),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 12, right: 12, top: 8, bottom: 8),
-                        child: Text(
-                          "Subscribe",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                            left: 0, right: 0, top: 0, bottom: 0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Stack(
+                            children: <Widget>[
+                              Positioned.fill(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: <Color>[
+                                        Color.fromARGB(255, 13, 161, 33),
+                                        Color.fromARGB(255, 25, 210, 102),
+                                        Color.fromARGB(255, 66, 245, 141),
+                                      ]
+                                    )
+                                  ),
+                                )
+                              ),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(16.0),
+                                  textStyle: const TextStyle(fontSize: 20),
+                                ),
+                                child: const Text('SINGING NOW'),
+                                onPressed: () async {
+                                  Navigator.push(context,
+                                    PageTransition(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Singing(
+                                        img: widget.song['img'],
+                                        song_url: widget.song['song_url'],
+                                        songname: widget.song['title'],
+                                        userData: widget.userData,
+                                        index: widget.index,
+                                      ),
+                                      type: PageTransitionType.scale
+                                    ),
+                                  );
+                                }
+                              )
+                            ],
+                          ),
+                        )
                       ),
                     )
                   ],
@@ -72,7 +119,7 @@ class _AlbumPageState extends State<AlbumPage> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 30),
                   child: Row(
-                    children: List.generate(widget.song.length, (index) {
+                    children: List.generate(1, (index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 30),
                         child: GestureDetector(

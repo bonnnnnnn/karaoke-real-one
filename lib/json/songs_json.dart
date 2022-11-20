@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../pages/forListening/test_songlist.dart';
-import 'dart:convert';
 
 List song_type_1 = [
   "Music",
@@ -29,7 +27,8 @@ List songs = [
     "color": Color(0xFFf69129),
     "song_url":
         "https://firebasestorage.googleapis.com/v0/b/karaoke-7439f.appspot.com/o/Ed%20Sheeran%20-%20Shape%20of%20You%20%5BOfficial%20Video%5D.mp3?alt=media&token=f5b4140c-28b5-4d4f-92af-e6fed94aafe3",
-    "songs": []
+    "songs": [],
+    "intruments" : ""
   },
   {
     "img":
@@ -112,7 +111,7 @@ List songs = [
     "date": "2 hr 14 min",
     "color": Color(0xFFa4c1ad),
     "song_url":
-        "https://firebasestorage.googleapis.com/v0/b/karaoke-7439f.appspot.com/o/Ed%20Sheeran%20-%20Shape%20of%20You%20%5BOfficial%20Video%5D.mp3?alt=media&token=f5b4140c-28b5-4d4f-92af-e6fed94aafe3",
+        "https://firebasestorage.googleapis.com/v0/b/karaoke-real-one.appspot.com/o/10%207%20RINGS%20-%20ORIGINAL.mp3?alt=media&token=dc866718-fd18-47b2-a625-59feb622bf5a",
     "songs": []
   },
   {

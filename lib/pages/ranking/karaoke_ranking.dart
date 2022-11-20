@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:karaoke_real_one/pages/ranking/Screen-profile/Profile_Page.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 class KaraokeRanking extends StatefulWidget {
   final List usersRanking;
@@ -48,18 +51,31 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
     var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Column(
-              children: List.generate(widget.usersRanking.length, (index) {
+              children: List.generate( widget.usersRanking.length, (index) {
               return Padding(
                 padding:
                     const EdgeInsets.only(left: 30, right: 30, bottom: 10),
                 child: GestureDetector(
+                  onTap: () async {
+                    List userData = [widget.usersRanking[widget.usersRanking.length-index-1]];
+                    List userSongs = await fb_connect().fetchingSongList(userData[0]['userName']);
+                    userData[0]['songs'] = userSongs;
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        child: ProfilePage(userData: userData),
+                        type: PageTransitionType.scale
+                      )
+                    );
+                  },
                   child: Row(
                     children: [
                       Container(
                         width: (size.width - 60) * 0.77,
                         child: Text(
-                          "${index + 1}  " + widget.usersRanking[index]['userName'],
-                          style: TextStyle(color: Colors.white),
+                          "${index + 1}  " + widget.usersRanking[widget.usersRanking.length-index-1]['userName'],
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                        ),
                       Container(
@@ -69,8 +85,8 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Scores",
-                              style: TextStyle(color: Colors.grey, fontSize: 14),
+                              widget.usersRanking[widget.usersRanking.length-index-1]['stars'].toString(),
+                              style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                             Container(
                               width: 25,
@@ -82,7 +98,7 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
                               child: Center(
                                   child: Icon(
                                 Icons.star,
-                                color: Colors.white,
+                                color: Color.fromARGB(255, 214, 252, 0),
                                 size: 16,
                               )
                             ),

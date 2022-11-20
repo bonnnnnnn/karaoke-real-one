@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:karaoke_real_one/pages/karaoke_home.dart';
-import 'package:karaoke_real_one/pages/karaoke_ranking.dart';
-import 'Screen-profile/Profile_Page.dart';
+import 'package:karaoke_real_one/pages/home/karaoke_home.dart';
+import 'package:karaoke_real_one/pages/ranking/karaoke_ranking.dart';
+import 'package:karaoke_real_one/pages/Screen-profile/Profile_Page.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 class RootApp extends StatefulWidget {
   final List userData;
@@ -19,6 +20,10 @@ class RootApp extends StatefulWidget {
 class _RootAppState extends State<RootApp> {
   int activeTab = 0;
 
+  List userData = [];
+  List rankingData = [];
+  List userSongs = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,12 +34,19 @@ class _RootAppState extends State<RootApp> {
   }
 
   Widget getBody() {
+    bool firstState = true;
+    if(firstState){
+      setState(() {
+        userData = widget.userData;
+      });
+      firstState = false;
+    }
     return IndexedStack(
       index: activeTab,
       children: [
-        HomePage(),
-        KaraokeRanking(usersRanking: widget.rankingData),
-        ProfilePage(userData: widget.userData)
+        HomePage(userData: userData),
+        KaraokeRanking(usersRanking: rankingData),
+        ProfilePage(userData: userData)
       ],
     );
   }
@@ -60,10 +72,18 @@ class _RootAppState extends State<RootApp> {
                   items[index],
                   color: activeTab == index ? Colors.green :Colors.white,
                 ),
-                onPressed: (){
+                onPressed: () async {
                   setState(() {
                     activeTab = index;
                   });
+                  if(index==1) {
+                    rankingData = await fb_connect().loadRanking();
+                  }else if(index==2) {
+                    setState(() {
+                      userData = widget.userData;
+                    });
+                    userData[0]['songs'] = await fb_connect().fetchingSongList(userData[0]['userName']);
+                  }
                 }
               );
             })

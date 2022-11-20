@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '/Screen-Profile/profile_widget.dart';
-import 'package:flutter_awesome_buttons/flutter_awesome_buttons.dart';
+import 'package:karaoke_real_one/pages/Screen-Profile/profile_widget.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -11,9 +8,6 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final user = FirebaseAuth.instance.currentUser!;
-  final Stream<QuerySnapshot> users =
-      FirebaseFirestore.instance.collection('users').snapshots();
   final _userNameController = TextEditingController();
   final _userAgeController = TextEditingController();
   final _userImageController = TextEditingController();
@@ -21,25 +15,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
-
-  Future upDate() async {
-    addUserDetails(
-      _userNameController.text.trim(),
-      int.parse(_userAgeController.text.trim()),
-      _userImageController.text.trim(),
-      _userAboutController.text.trim(),
-    );
-  }
-
-  Future addUserDetails(
-      String userName, int userAge, String userImage, String userAbout) async {
-    await FirebaseFirestore.instance.collection('users').add({
-      'name': userName,
-      'age': userAge,
-      'about': userAbout,
-      'image': userImage,
-    });
-  }
 
   @override
   void dispose() {
@@ -164,7 +139,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       padding: EdgeInsets.symmetric(vertical: 10),
       width: double.infinity,
       child: RoundedLoadingButton(
-        onPressed: upDate,
+        onPressed: (){},
         color: Colors.amber,
         controller: _btnController,
         child: Text(

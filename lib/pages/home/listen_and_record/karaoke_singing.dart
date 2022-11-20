@@ -1,39 +1,32 @@
 import 'dart:ui';
-
 import 'dart:async';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
-
-import 'karaoke_seekbar.dart';
-
-import 'const.dart';
-
+import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_seekbar.dart';
 import 'package:flutter/foundation.dart';
-import 'package:record/record.dart';
-
-import 'flask_connect.dart';
-
+import 'package:record/record.dart'; 
+import 'package:karaoke_real_one/pages/home/listen_and_record/flask_connect.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
+import 'package:karaoke_real_one/pages/home/listen_and_record/const.dart';
 
 flask_connect flask = new flask_connect();
 
-// void main() {
-//   runApp(MaterialApp(home: Singing(
-//     song_url: "https://firebasestorage.googleapis.com/v0/b/karaoke-7439f.appspot.com/o/Ed%20Sheeran%20-%20Shape%20of%20You%20%5BOfficial%20Video%5D.mp3?alt=media&token=f5b4140c-28b5-4d4f-92af-e6fed94aafe3",
-//     song_covered: "https://korism.com/_upload/news/2021/10/145379/163471130613.jpg"
-//     )));
-// }
-
 class Singing extends StatefulWidget {
   final String song_url;
-  final String song_covered;
+  final String img;
+  final String songname;
+  final List userData;
+  final int index;
+
   const Singing({
     Key? key,
     required this.song_url,
-    required this.song_covered,
-    }) : super(key: key);
+    required this.img,
+    required this.songname,
+    required this.userData,
+    required this.index
+  }) : super(key: key);
 
   @override
   _SingingState createState() => _SingingState();
@@ -54,7 +47,6 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   RecordState _recordState = RecordState.stop;
   StreamSubscription<Amplitude>? _amplitudeSub;
   Amplitude? _amplitude;
-  
 
   @override
   void initState() {
@@ -65,6 +57,11 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
     _amplitudeSub = _audioRecorder
         .onAmplitudeChanged(const Duration(milliseconds: 300))
         .listen((amp) => setState(() => _amplitude = amp));
+
+    lyricModel = LyricsModelBuilder.create()
+      .bindLyricToMain(normalLyric[widget.index])
+      // .bindLyricToExt(transLyric)
+      .getModel();
 
     super.initState();
   }
@@ -140,11 +137,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   }
 
   bool useEnhancedLrc = false;
-  var lyricModel = LyricsModelBuilder.create()
-      .bindLyricToMain(normalLyric)
-      // .bindLyricToExt(transLyric)
-      .getModel();
-
+  var lyricModel;
   var lyricUI = UINetease(defaultSize: 30,lineGap: 30,highlight: false);
 
   Stream<SeekBarData> get _seekBarDataSteam =>
@@ -162,12 +155,43 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: getAppBar(),
       extendBodyBehindAppBar: true,
       body: buildBody(),
+    );
+  }
+
+  AppBar getAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.black.withOpacity(0.2),
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios),
+        onPressed: () {
+          Navigator.pop(context);
+          audioPlayer?.stop();
+          audioPlayer = AudioPlayer();
+          setState(() {
+            isPlaying = false;
+            firstTimePlay = true;
+            _stop();
+          });
+        },),
+      title: Padding(
+        padding: const EdgeInsets.only(left: 0, right: 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "NOW SINGING" ,
+              style: TextStyle(
+                  fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            Icon(Icons.music_note),
+          ],
+        ),
+      ),
     );
   }
 
@@ -179,7 +203,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
       fit: StackFit.expand,
       children: [
         Image.network(
-          widget.song_covered,
+          widget.img,
           fit: BoxFit.cover,
         ),
         ShaderMask(
@@ -302,7 +326,12 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                                 });
                                 audioPlayer?.onPlayerComplete.listen((event) {
                                   setState(() {
-                                    flask.upload(_stop());
+                                    flask.upload(
+                                      _stop(), 
+                                      widget.index.toString(), 
+                                      widget.userData[0]['userName'], 
+                                      widget.songname
+                                    );
                                   });
                                 });
                               } else {
