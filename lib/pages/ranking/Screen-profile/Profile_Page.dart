@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 100),
               ProfileWidget(
                 imagePath:
-                    'https://upload.wikimedia.org/wikipedia/th/thumb/5/5d/Your_Name_poster.jpg/640px-Your_Name_poster.jpg',
+                    widget.userData[0]['img'],
                 onClicked: () {
                   
                 },

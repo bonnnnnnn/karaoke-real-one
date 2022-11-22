@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:karaoke_real_one/pages/Screen-Profile/profile_widget.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -8,10 +10,10 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  PlatformFile? pickedFile;
+
   final _userNameController = TextEditingController();
-  final _userAgeController = TextEditingController();
   final _userImageController = TextEditingController();
-  final _userAboutController = TextEditingController();
 
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
@@ -19,10 +21,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     _userNameController.dispose();
-    _userAgeController.dispose();
     _userImageController.dispose();
-    _userAboutController.dispose();
     super.dispose();
+  }
+
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
   }
 
   Widget build(BuildContext context) => Scaffold(
@@ -43,21 +52,100 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               children: [
                 const SizedBox(height: 100),
-                ProfileWidget(
-                  imagePath:
-                      'https://upload.wikimedia.org/wikipedia/th/thumb/5/5d/Your_Name_poster.jpg/640px-Your_Name_poster.jpg',
-                  isEdit: true,
-                  onClicked: () async {},
-                ),
+                if (pickedFile == null)
+                  Container(
+                    child: noImage(),
+                  ),
+                if (pickedFile != null)
+                  Container(
+                    child: Stack(
+                      children: [
+                        haveImage(),
+                        Positioned(
+                          bottom: 0,
+                          right: 4,
+                          child: buildEditIcon(Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
                 SizedBox(height: 40),
                 buildUsername(),
+                SizedBox(height: 50),
+                selectFileBtn(),
                 SizedBox(height: 10),
-                buildAbout(),
-                SizedBox(height: 40),
+                uploadFileBtn(),
+                SizedBox(height: 100),
                 bulidUpdateBtn(),
               ],
             ),
           ),
+        ),
+      );
+
+  Widget noImage() {
+    return ProfileWidget(
+      imagePath:
+          'https://i.pinimg.com/280x280_RS/2e/45/66/2e4566fd829bcf9eb11ccdb5f252b02f.jpg',
+      isEdit: true,
+      onClicked: selectFile,
+    );
+  }
+
+  Widget haveImage() {
+    final image = File(pickedFile!.path!);
+
+    return ClipOval(
+      child: Material(
+        color: Colors.transparent,
+        child: Image.file(
+          File(pickedFile!.path!),
+          fit: BoxFit.cover,
+          width: 128,
+          height: 128,
+        ),
+      ),
+    );
+  }
+
+  Widget selectFileBtn() {
+    return ElevatedButton(
+      child: Text('Select Image'),
+      onPressed: selectFile,
+    );
+  }
+
+  Widget uploadFileBtn() {
+    return ElevatedButton(
+      child: Text('Upload Image'),
+      onPressed: (){},
+    );
+  }
+
+  Widget buildEditIcon(Color color) => buildCircle(
+        color: Colors.black,
+        all: 3,
+        child: buildCircle(
+          color: Color.fromARGB(255, 0, 255, 8),
+          all: 8,
+          child: Icon(
+            Icons.add_a_photo,
+            color: Colors.black,
+            size: 20,
+          ),
+        ),
+      );
+
+  Widget buildCircle({
+    required Widget child,
+    required double all,
+    required Color color,
+  }) =>
+      ClipOval(
+        child: Container(
+          padding: EdgeInsets.all(all),
+          color: color,
+          child: child,
         ),
       );
 
@@ -97,60 +185,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget buildAbout() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'About',
-          style: TextStyle(
-              color: Colors.white60, fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 6),
-        Container(
-            alignment: Alignment.topLeft,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, 2))
-                ]),
-            height: 200,
-            child: TextField(
-              controller: _userAboutController,
-              style: TextStyle(color: Colors.black87),
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(top: 14),
-                  prefixIcon:
-                      Icon(Icons.text_snippet, color: Color(0xff999999)),
-                  hintText: 'About',
-                  hintStyle: TextStyle(color: Colors.black38)),
-            )),
-      ],
-    );
-  }
-
   Widget bulidUpdateBtn() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      width: double.infinity,
-      child: RoundedLoadingButton(
-        onPressed: (){},
-        color: Colors.amber,
-        controller: _btnController,
-        child: Text(
-          'UPDATE',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+    return ElevatedButton(
+      child: Text('UPDATE'),
+      onPressed: () {},
     );
   }
 }

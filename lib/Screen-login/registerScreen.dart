@@ -95,7 +95,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "userAge": userAge,
       "stars": 0,
       "songs_count": 0,
-      "rating": 0
+      "rating": 0,
+      "img": "https://i.pinimg.com/280x280_RS/2e/45/66/2e4566fd829bcf9eb11ccdb5f252b02f.jpg"
     });
   }
 

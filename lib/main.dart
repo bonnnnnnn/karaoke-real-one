@@ -63,12 +63,20 @@ class _HomePage extends State<MyApp> {
     final nextroute;
     if(user != null ){
       loaduser(user.uid);
-      if(!userData.isEmpty ) {
-        fetchingSongList(userData[0]['userName']);
-        userData[0]['songs'] = userSongs;
-        if(!userSongs.isEmpty && userData[0]['songs_count'] != 0){
+      if(!userData.isEmpty) {
+        if(userSongs.isEmpty && userData[0]['songs_count'] > 0){
+          fetchingSongList(userData[0]['userName']);
+          userData[0]['songs'] = userSongs;
+          nextroute = MaterialApp(
+            theme: ThemeData(
+            primaryColor: Color.fromARGB(255, 0, 255, 8),
+            dividerColor: Colors.white),
+            debugShowCheckedModeBanner: false,
+          );
+        }else if(!userSongs.isEmpty && userData[0]['songs_count'] > 0){
           nextroute =  RootApp(userData: userData, rankingData: usersRanking);
-        }else if(userData[0]['songs_count'] ==0){
+        }else if(userSongs.isEmpty && userData[0]['songs_count'] == 0){
+          userData[0]['songs'] = [];
           nextroute = RootApp(userData: userData, rankingData: usersRanking);
         }else{
           nextroute = MaterialApp(

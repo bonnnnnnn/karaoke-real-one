@@ -92,13 +92,21 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
     }
   }
 
-  Future<String> _stop() async {
+  Future<void> _stop(bool complete) async {
     _timer?.cancel();
     _recordDuration = 0;
 
     final path = await _audioRecorder.stop();
 
-    return path.toString();
+    if (complete) {
+      flask.upload(path.toString(), widget.index.toString(), widget.userData[0]['userName'], widget.songname);
+    }
+
+    print(path.toString());
+    print(widget.index.toString());
+    print(widget.userData[0]['userName']);
+    print( widget.songname);
+
   }
 
   Future<void> _pause() async {
@@ -175,7 +183,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
           setState(() {
             isPlaying = false;
             firstTimePlay = true;
-            _stop();
+            _stop(false);
           });
         },),
       title: Padding(
@@ -326,12 +334,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                                 });
                                 audioPlayer?.onPlayerComplete.listen((event) {
                                   setState(() {
-                                    flask.upload(
-                                      _stop(), 
-                                      widget.index.toString(), 
-                                      widget.userData[0]['userName'], 
-                                      widget.songname
-                                    );
+                                    _stop(true);
                                   });
                                 });
                               } else {
@@ -363,7 +366,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                           setState(() {
                             isPlaying = false;
                             firstTimePlay = true;
-                            _stop();
+                            _stop(true);
                           });
                         }),
                     ),

@@ -93,7 +93,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                       alignment: Alignment.bottomCenter,
                                       child: Singing(
                                         img: widget.song['img'],
-                                        song_url: widget.song['song_url'],
+                                        song_url: widget.song['intruments'],
                                         songname: widget.song['title'],
                                         userData: widget.userData,
                                         index: widget.index,
@@ -225,7 +225,7 @@ class _AlbumPageState extends State<AlbumPage> {
                         Container(
                           width: (size.width - 60) * 0.77,
                           child: Text(
-                            "${index + 1}  " + songAlbums[index]['title'],
+                            "${index + 1}  " + songAlbums[index]['title'] + " - " + songAlbums[index]['userName'],
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -236,7 +236,7 @@ class _AlbumPageState extends State<AlbumPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                songAlbums[index]['duration'],
+                                'Star(s): '+ songAlbums[index]['stars'].toString(),
                                 style: TextStyle(color: Colors.grey, fontSize: 14),
                               ),
                               Container(

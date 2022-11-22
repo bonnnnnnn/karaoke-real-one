@@ -1,3 +1,4 @@
+import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/pages/ranking/Screen-profile/Profile_Page.dart';
@@ -15,6 +16,7 @@ class KaraokeRanking extends StatefulWidget {
 }
 
 class _KaraokeRankingState extends State<KaraokeRanking> {
+  final TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +42,27 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
               style: TextStyle(
                   fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
             ),
-            Icon(Icons.list)
+            searchIcon(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget searchIcon() {
+    return AnimSearchBar(
+      width: 275,
+      textController: textController,
+      onSuffixTap: () {
+        setState(() {
+          textController.clear();
+        });
+      },
+      color: Colors.white24,
+      helpText: "Search Music",
+      autoFocus: true,
+      closeSearchOnSuffixTap: true,
+      animationDurationInMilli: 600,
     );
   }
 

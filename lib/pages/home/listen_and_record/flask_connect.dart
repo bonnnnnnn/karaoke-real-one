@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class flask_connect {
   upload (path, String index, String userName, String songname) async {
-    var myuri = "192.168.1.38:4000";
+    var myuri = "http://192.168.1.38:4000";
     var request = http.MultipartRequest('POST', Uri.parse(myuri+"/upload?index="+index+
                                                           "&songname="+songname+
                                                           "&userName="+userName));
