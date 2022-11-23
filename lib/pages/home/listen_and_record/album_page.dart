@@ -236,7 +236,7 @@ class _AlbumPageState extends State<AlbumPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Star(s): '+ songAlbums[index]['stars'].toString(),
+                                songAlbums[index]['stars'].toString() + ' star(s)',
                                 style: TextStyle(color: Colors.grey, fontSize: 14),
                               ),
                               Container(

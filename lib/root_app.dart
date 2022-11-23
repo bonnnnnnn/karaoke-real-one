@@ -82,7 +82,9 @@ class _RootAppState extends State<RootApp> {
                     setState(() {
                       userData = widget.userData;
                     });
-                    userData[0]['songs'] = await fb_connect().fetchingSongList(userData[0]['userName']);
+                    if(userData[0]['songs_count']>0){
+                      userData[0]['songs'] = await fb_connect().fetchingSongList(userData[0]['userName']);
+                    }
                   }
                 }
               );

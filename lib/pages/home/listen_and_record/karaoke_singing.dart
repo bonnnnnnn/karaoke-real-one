@@ -280,7 +280,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                     child: IconButton(
                       icon: Icon(
                         Icons.pause,
-                        color: Colors.white,
+                        color: isPlaying? Colors.white : Colors.grey,
                         size: 30,),
                       onPressed: () async {
                         if(isPlaying == false || firstTimePlay == true) return;
@@ -305,7 +305,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                         child: IconButton(
                           icon: Icon(
                           Icons.mic,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: isPlaying? Colors.grey : Colors.white,
                           size: 30,),
                           onPressed: () async {
                             if (isPlaying == false && firstTimePlay == true) {
@@ -356,7 +356,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                       child: IconButton(
                         icon: Icon(
                           Icons.stop,
-                          color: Colors.white,
+                          color: isPlaying?  Colors.white : Colors.grey,
                           size: 30,
                         ),
                         onPressed: () async {
@@ -366,7 +366,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                           setState(() {
                             isPlaying = false;
                             firstTimePlay = true;
-                            _stop(true);
+                            _stop(false);
                           });
                         }),
                     ),

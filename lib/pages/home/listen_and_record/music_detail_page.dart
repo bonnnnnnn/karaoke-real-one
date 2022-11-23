@@ -167,7 +167,7 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
                     child: IconButton(
                       icon: Icon(
                         Icons.pause,
-                        color: Colors.white,
+                        color: isPlaying? Colors.white : Colors.grey,
                         size: 30,),
                       onPressed: () async {
                         if(isPlaying == false || firstTimePlay == true) return;
@@ -191,7 +191,7 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
                         child: IconButton(
                           icon: Icon(
                           Icons.play_arrow,
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: isPlaying? Colors.grey : Colors.white,
                           size: 30,),
                           onPressed: () async {
                             if (isPlaying == false && firstTimePlay == true) {
@@ -234,7 +234,7 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
                       child: IconButton(
                         icon: Icon(
                           Icons.stop,
-                          color: Colors.white,
+                          color: isPlaying? Colors.white : Colors.grey,
                           size: 30,
                         ),
                         onPressed: () async {
