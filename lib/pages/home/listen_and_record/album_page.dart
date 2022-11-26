@@ -8,23 +8,77 @@ class AlbumPage extends StatefulWidget {
   final List userData;
   final int index;
 
-  const AlbumPage({
-    Key? key, 
-    required this.song,
-    required this.userData,
-    required this.index
-    }) : super(key: key);
+  const AlbumPage(
+      {Key? key,
+      required this.song,
+      required this.userData,
+      required this.index})
+      : super(key: key);
   @override
   _AlbumPageState createState() => _AlbumPageState();
 }
 
 class _AlbumPageState extends State<AlbumPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      bottomNavigationBar: getFooter(),
       body: getBody(),
+    );
+  }
+
+  Widget getFooter() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.grey, borderRadius: BorderRadius.circular(5)),
+      child: Padding(
+          padding: const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                    child: Container(
+                  decoration: const BoxDecoration(
+                      gradient: LinearGradient(colors: <Color>[
+                    Color.fromARGB(255, 13, 161, 33),
+                    Color.fromARGB(255, 25, 210, 102),
+                    Color.fromARGB(255, 66, 245, 141),
+                  ])),
+                )),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.only(left: 140, right: 140, bottom: 1),
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                          const Text(
+                          'SINGING NOW',
+                        )
+                      ],
+                    ),
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                            alignment: Alignment.bottomCenter,
+                            child: Singing(
+                              img: widget.song['img'],
+                              song_url: widget.song['intruments'],
+                              songname: widget.song['title'],
+                              userData: widget.userData,
+                              index: widget.index,
+                            ),
+                            type: PageTransitionType.scale),
+                      );
+                    })
+              ],
+            ),
+          )),
     );
   }
 
@@ -48,66 +102,15 @@ class _AlbumPageState extends State<AlbumPage> {
                 height: 30,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(widget.song['title'],
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey, borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 0, right: 0, top: 0, bottom: 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Stack(
-                            children: <Widget>[
-                              Positioned.fill(
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: <Color>[
-                                        Color.fromARGB(255, 13, 161, 33),
-                                        Color.fromARGB(255, 25, 210, 102),
-                                        Color.fromARGB(255, 66, 245, 141),
-                                      ]
-                                    )
-                                  ),
-                                )
-                              ),
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(16.0),
-                                  textStyle: const TextStyle(fontSize: 20),
-                                ),
-                                child: const Text('SINGING NOW'),
-                                onPressed: () async {
-                                  Navigator.push(context,
-                                    PageTransition(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Singing(
-                                        img: widget.song['img'],
-                                        song_url: widget.song['intruments'],
-                                        songname: widget.song['title'],
-                                        userData: widget.userData,
-                                        index: widget.index,
-                                      ),
-                                      type: PageTransitionType.scale
-                                    ),
-                                  );
-                                }
-                              )
-                            ],
-                          ),
-                        )
-                      ),
-                    )
+                            color: Color.fromARGB(255, 0, 255, 8))),
                   ],
                 ),
               ),
@@ -169,7 +172,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      widget.song['song_count'],
+                                      "",
                                       maxLines: 1,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -178,7 +181,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
-                                      widget.song['date'],
+                                      "",
                                       maxLines: 1,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -199,6 +202,43 @@ class _AlbumPageState extends State<AlbumPage> {
               ),
               SizedBox(
                 height: 30,
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 30, bottom: 0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: (size.width - 60) * 0.70,
+                          child: Text(
+                            "#  " +
+                            "Name",
+                          style: TextStyle(
+                          color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          width: (size.width - 60) * 0.30,
+                          height: 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Total Stars",
+                                style: TextStyle(
+                                  color: Colors.yellow.withOpacity(0.8),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ]
               ),
               Column(
                   children: List.generate(songAlbums.length, (index) {
@@ -225,7 +265,10 @@ class _AlbumPageState extends State<AlbumPage> {
                         Container(
                           width: (size.width - 60) * 0.77,
                           child: Text(
-                            "${index + 1}  " + songAlbums[index]['title'] + " - " + songAlbums[index]['userName'],
+                            "${index + 1}  " +
+                                songAlbums[index]['title'] +
+                                " - " +
+                                songAlbums[index]['userName'],
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -233,27 +276,21 @@ class _AlbumPageState extends State<AlbumPage> {
                           width: (size.width - 60) * 0.23,
                           height: 50,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                songAlbums[index]['stars'].toString() + ' star(s)',
-                                style: TextStyle(color: Colors.grey, fontSize: 14),
-                              ),
-                              Container(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: List.generate(songAlbums[index]['stars'], (index){
+                              return Container(
                                 width: 25,
                                 height: 25,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey.withOpacity(0.8),
+                                  color: Colors.orange.shade400,
                                 ),
-                                child: Center(
-                                    child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 16,
-                                )),
-                              )
-                            ],
+                                child: Icon(
+                                  Icons.star,
+                                  color: Colors.red,
+                                  )
+                              );
+                            })
                           ),
                         ),
                       ],
@@ -275,14 +312,6 @@ class _AlbumPageState extends State<AlbumPage> {
                     onPressed: () {
                       Navigator.pop(context);
                     }),
-                IconButton(
-                    icon: Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
               ],
             ),
           )

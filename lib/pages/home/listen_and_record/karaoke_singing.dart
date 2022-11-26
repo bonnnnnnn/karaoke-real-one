@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_seekbar.dart';
 import 'package:flutter/foundation.dart';
-import 'package:record/record.dart'; 
+import 'package:record/record.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/flask_connect.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
 import 'package:karaoke_real_one/pages/home/listen_and_record/const.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 flask_connect flask = new flask_connect();
 
@@ -19,14 +20,14 @@ class Singing extends StatefulWidget {
   final List userData;
   final int index;
 
-  const Singing({
-    Key? key,
-    required this.song_url,
-    required this.img,
-    required this.songname,
-    required this.userData,
-    required this.index
-  }) : super(key: key);
+  const Singing(
+      {Key? key,
+      required this.song_url,
+      required this.img,
+      required this.songname,
+      required this.userData,
+      required this.index})
+      : super(key: key);
 
   @override
   _SingingState createState() => _SingingState();
@@ -48,6 +49,8 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   StreamSubscription<Amplitude>? _amplitudeSub;
   Amplitude? _amplitude;
 
+  final RoundedLoadingButtonController _btnController1 = RoundedLoadingButtonController();
+
   @override
   void initState() {
     _recordSub = _audioRecorder.onStateChanged().listen((recordState) {
@@ -59,9 +62,9 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
         .listen((amp) => setState(() => _amplitude = amp));
 
     lyricModel = LyricsModelBuilder.create()
-      .bindLyricToMain(normalLyric[widget.index])
-      // .bindLyricToExt(transLyric)
-      .getModel();
+        .bindLyricToMain(normalLyric[widget.index])
+        // .bindLyricToExt(transLyric)
+        .getModel();
 
     super.initState();
   }
@@ -96,17 +99,21 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
     _timer?.cancel();
     _recordDuration = 0;
 
-    final path = await _audioRecorder.stop();
+    var path = null;
+    path = await _audioRecorder.stop();
 
     if (complete) {
-      flask.upload(path.toString(), widget.index.toString(), widget.userData[0]['userName'], widget.songname);
+      Timer(Duration(seconds: 1),() async {
+        _btnController1.reset();
+        await flask.upload(path.toString(), widget.index.toString(),
+          widget.userData[0]['userName'], widget.songname);
+      });
     }
 
-    print(path.toString());
-    print(widget.index.toString());
-    print(widget.userData[0]['userName']);
-    print( widget.songname);
-
+    // print(path.toString());
+    // print(widget.index.toString());
+    // print(widget.userData[0]['userName']);
+    // print(widget.songname);
   }
 
   Future<void> _pause() async {
@@ -118,7 +125,8 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
     _startTimer();
     await _audioRecorder.resume();
   }
-    String _formatNumber(int number) {
+
+  String _formatNumber(int number) {
     String numberStr = number.toString();
     if (number < 10) {
       numberStr = '0' + numberStr;
@@ -146,19 +154,16 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
 
   bool useEnhancedLrc = false;
   var lyricModel;
-  var lyricUI = UINetease(defaultSize: 30,lineGap: 30,highlight: false);
+  var lyricUI = UINetease(defaultSize: 30, lineGap: 30, highlight: false);
 
   Stream<SeekBarData> get _seekBarDataSteam =>
-  rxdart.Rx.combineLatest2<Duration, Duration, SeekBarData>(
-    audioPlayer!.onPositionChanged,
-    audioPlayer!.onDurationChanged,
-    (Duration position, Duration? duration,){
-      return SeekBarData(
-        position, 
-        duration ?? Duration.zero
-      );
-    }
-  );
+      rxdart.Rx.combineLatest2<Duration, Duration, SeekBarData>(
+          audioPlayer!.onPositionChanged, audioPlayer!.onDurationChanged, (
+        Duration position,
+        Duration? duration,
+      ) {
+        return SeekBarData(position, duration ?? Duration.zero);
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -185,16 +190,19 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
             firstTimePlay = true;
             _stop(false);
           });
-        },),
+        },
+      ),
       title: Padding(
         padding: const EdgeInsets.only(left: 0, right: 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              "NOW SINGING" ,
+              "NOW SINGING",
               style: TextStyle(
-                  fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
             Icon(Icons.music_note),
           ],
@@ -206,7 +214,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   bool isPlaying = false;
   bool firstTimePlay = true;
 
-  Widget buildBody(){
+  Widget buildBody() {
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -215,34 +223,31 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
           fit: BoxFit.cover,
         ),
         ShaderMask(
-          shaderCallback: (rect){
+          shaderCallback: (rect) {
             return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.white,
-                Colors.white.withOpacity(0.5),
-                Colors.white.withOpacity(0.0),
-              ],
-              stops: const [
-                0.0,
-                0.4,
-                0.6
-              ]
-            ).createShader(rect);
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.white,
+                  Colors.white.withOpacity(0.5),
+                  Colors.white.withOpacity(0.0),
+                ],
+                stops: const [
+                  0.0,
+                  0.4,
+                  0.6
+                ]).createShader(rect);
           },
           blendMode: BlendMode.dstOut,
           child: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
                   Colors.black.withOpacity(0.8),
                   Colors.black,
-                ]
-              )
-            ),
+                ])),
           ),
         ),
         Positioned.fill(
@@ -261,29 +266,29 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               StreamBuilder<SeekBarData>(
-                stream: _seekBarDataSteam,
-                builder: 
-                (context, snapshot){
-                  final positionData = snapshot.data;
-                  return SeekBar(
-                    position: positionData?.position ?? Duration.zero, 
-                    duration: positionData?.duration ?? Duration.zero,
-                    onChangedEnd: audioPlayer!.seek,
-                  );
-                }),
+                  stream: _seekBarDataSteam,
+                  builder: (context, snapshot) {
+                    final positionData = snapshot.data;
+                    return SeekBar(
+                      position: positionData?.position ?? Duration.zero,
+                      duration: positionData?.duration ?? Duration.zero,
+                      onChangedEnd: audioPlayer!.seek,
+                    );
+                  }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                CircleAvatar(
+                  CircleAvatar(
                     radius: 29,
                     backgroundColor: Colors.white.withOpacity(0.0),
                     child: IconButton(
                       icon: Icon(
                         Icons.pause,
-                        color: isPlaying? Colors.white : Colors.grey,
-                        size: 30,),
+                        color: isPlaying ? Colors.white : Colors.grey,
+                        size: 30,
+                      ),
                       onPressed: () async {
-                        if(isPlaying == false || firstTimePlay == true) return;
+                        if (isPlaying == false || firstTimePlay == true) return;
                         audioPlayer?.pause();
                         setState(() {
                           isPlaying = false;
@@ -291,76 +296,82 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                         });
                       },
                     ),
-                ),
-                Container(
-                  width: 10,
-                ),
-                CircleAvatar(
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  CircleAvatar(
                     radius: 30,
                     backgroundColor: Colors.white.withOpacity(0.0),
-                    child: 
-                      CircleAvatar(
-                        backgroundColor: Colors.white.withOpacity(0.0),
-                        radius: 29,
-                        child: IconButton(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white.withOpacity(0.0),
+                      radius: 29,
+                      child: IconButton(
                           icon: Icon(
-                          Icons.mic,
-                          color: isPlaying? Colors.grey : Colors.white,
-                          size: 30,),
+                            Icons.mic,
+                            color: isPlaying ? Colors.grey : Colors.white,
+                            size: 30,
+                          ),
                           onPressed: () async {
                             if (isPlaying == false && firstTimePlay == true) {
-                                audioPlayer = AudioPlayer()..play(UrlSource(widget.song_url));
+                              audioPlayer = AudioPlayer()
+                                ..play(UrlSource(widget.song_url));
+                              setState(() {
+                                playing = true;
+                                isPlaying = true;
+                                firstTimePlay = false;
+                                _start();
+                              });
+                              audioPlayer?.onDurationChanged
+                                  .listen((Duration event) {
                                 setState(() {
-                                  playing = true;
-                                  isPlaying = true;
-                                  firstTimePlay = false;
-                                  _start();
+                                  max_value = event.inMilliseconds.toDouble();
                                 });
-                                audioPlayer?.onDurationChanged.listen((Duration event) {
-                                  setState(() {
-                                    max_value = event.inMilliseconds.toDouble();
-                                  });
+                              });
+                              audioPlayer?.onPositionChanged
+                                  .listen((Duration event) {
+                                if (isTap) return;
+                                setState(() {
+                                  playProgress = event.inMilliseconds;
                                 });
-                                audioPlayer?.onPositionChanged.listen((Duration event) {
-                                  if (isTap) return;
-                                  setState(() {
-                                    playProgress = event.inMilliseconds;
-                                  });
+                              });
+                              audioPlayer?.onPlayerStateChanged
+                                  .listen((PlayerState state) {
+                                setState(() {
+                                  playing = state == PlayerState.playing;
                                 });
-                                audioPlayer?.onPlayerStateChanged.listen((PlayerState state) {
-                                  setState(() {
-                                    playing = state == PlayerState.playing;
-                                  });
+                              });
+                              audioPlayer?.onPlayerComplete.listen((event) {
+                                setState(() {
+                                  _stop(true);
+                                  playProgress = 0;
                                 });
-                                audioPlayer?.onPlayerComplete.listen((event) {
-                                  setState(() {
-                                    _stop(true);
-                                  });
-                                });
-                              } else {
-                                audioPlayer?.resume();
-                                setState((){
-                                  isPlaying = true;
-                                  _resume();
-                                });
-                              }
+                              });
+                            } else {
+                              audioPlayer?.resume();
+                              setState(() {
+                                isPlaying = true;
+                                _resume();
+                              });
+                            }
                           }),
-                        ),
                     ),
-                    Container(
-                      width: 10,
-                    ),
-                    CircleAvatar(
-                      radius: 29,
-                      backgroundColor: Colors.white.withOpacity(0.0),
-                      child: IconButton(
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  CircleAvatar(
+                    radius: 29,
+                    backgroundColor: Colors.white.withOpacity(0.0),
+                    child: IconButton(
                         icon: Icon(
                           Icons.stop,
-                          color: isPlaying?  Colors.white : Colors.grey,
+                          color: isPlaying ? Colors.white : Colors.grey,
                           size: 30,
                         ),
                         onPressed: () async {
-                          if(isPlaying == false || firstTimePlay == true) return;
+                          if (isPlaying == false || firstTimePlay == true)
+                            return;
                           audioPlayer?.stop();
                           audioPlayer = AudioPlayer();
                           setState(() {
@@ -369,7 +380,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                             _stop(false);
                           });
                         }),
-                    ),
+                  ),
                 ],
               )
             ],
@@ -391,7 +402,8 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
           position: playProgress,
           lyricUi: lyricUI,
           playing: playing,
-          size: Size(double.infinity, MediaQuery.of(context).size.height *3/4),
+          size:
+              Size(double.infinity, MediaQuery.of(context).size.height * 3 / 4),
           emptyBuilder: () => Center(
             child: Text(
               "No lyrics",
@@ -404,5 +416,4 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   }
 
   var playing = false;
-
 }

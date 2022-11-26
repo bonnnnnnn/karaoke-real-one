@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/json/songs_json.dart';
@@ -7,23 +10,17 @@ import 'package:karaoke_real_one/fb_connect.dart';
 class HomePage extends StatefulWidget {
   final List userData;
 
-  const HomePage({
-    Key? key,
-    required this.userData
-    }) : super(key: key);
+  const HomePage({Key? key, required this.userData}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int activeMenu1 = 0;
-  int activeMenu2 = 0;
-  int activeMenu3 = 0;
-  int activeMenu4 = 0;
+  final TextEditingController textController = TextEditingController();
 
   List listsong = [];
 
-  static Future<List> getSonglist(List listsong, String songname) async{
+  static Future<List> getSonglist(List listsong, String songname) async {
     return await fb_connect().loadSong(listsong, songname);
   }
 
@@ -47,14 +44,58 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Explore",
+              "Pop Song",
               style: TextStyle(
-                  fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                  fontSize: 20,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold),
             ),
-            Icon(Icons.list)
+            searchIcon(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget searchIcon() {
+    return AnimSearchBar(
+      width: 200,
+      textController: 
+        textController
+          ..addListener(() { 
+            new Timer(Duration(seconds: 5), () async{
+              String textSearch = textController.text;
+              for(int i = 0;i<songs.length; i++){
+                final song = songs[i];
+                if(song['title'].toString().toLowerCase() == textSearch.toLowerCase()){
+                  textController.clear();
+                  song['songs'] = await getSonglist(listsong, songs[i]['title']);
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      alignment: Alignment.bottomCenter,
+                      child: AlbumPage(
+                        song: song,
+                        userData: widget.userData,
+                        index: i,
+                      ),
+                    type: PageTransitionType.scale),
+                  );
+                  break;
+                }
+              }
+            });
+          }),
+      onSuffixTap: () {
+        setState(() {
+          textController.clear();
+        });
+      },
+      color: Colors.white24,
+      helpText: "Search Music",
+      autoFocus: true,
+      closeSearchOnSuffixTap: true,
+      animationDurationInMilli: 600,
     );
   }
 
@@ -66,49 +107,6 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30, top: 20),
-                  child: Row(
-                      children: List.generate(song_type_1.length, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            activeMenu1 = index;
-                          });
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              song_type_1[index],
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: activeMenu1 == index ? Colors.green : Colors.grey,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            activeMenu1 == index
-                                ? Container(
-                                    width: 10,
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(5)),
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    );
-                  })),
-                ),
-              ),
               SizedBox(
                 height: 20,
               ),
@@ -123,7 +121,8 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () async {
                             listsong = [];
-                            songs[index]['songs'] = await getSonglist(listsong, songs[index]['title']);
+                            songs[index]['songs'] = await getSonglist(
+                                listsong, songs[index]['title']);
                             Navigator.push(
                                 context,
                                 PageTransition(
@@ -142,7 +141,8 @@ class _HomePageState extends State<HomePage> {
                                 height: 180,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image: NetworkImage(songs[index]['img']),
+                                        image:
+                                            NetworkImage(songs[index]['img']),
                                         fit: BoxFit.cover),
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(10)),
@@ -182,55 +182,9 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30, top: 20),
-                  child: Row(
-                      children: List.generate(song_type_2.length, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            activeMenu2 = index;
-                          });
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              song_type_2[index],
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: activeMenu2 == index ? Colors.green : Colors.grey,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            activeMenu2 == index
-                                ? Container(
-                                    width: 10,
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(5)),
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    );
-                  })),
-                ),
-              ),
               SizedBox(
                 height: 20,
               ),
@@ -245,7 +199,8 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () async {
                             listsong = [];
-                            songs[index+5]['songs'] = await getSonglist(listsong, songs[index+5]['title']);
+                            songs[index + 5]['songs'] = await getSonglist(
+                                listsong, songs[index + 5]['title']);
                             Navigator.push(
                                 context,
                                 PageTransition(
@@ -264,8 +219,8 @@ class _HomePageState extends State<HomePage> {
                                 height: 180,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image:
-                                            NetworkImage(songs[index + 5]['img']),
+                                        image: NetworkImage(
+                                            songs[index + 5]['img']),
                                         fit: BoxFit.cover),
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(10)),
@@ -308,49 +263,6 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30, top: 20),
-                  child: Row(
-                      children: List.generate(song_type_1.length, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            activeMenu3 = index;
-                          });
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              song_type_1[index],
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: activeMenu3 == index ? Colors.green : Colors.grey,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            activeMenu3 == index
-                                ? Container(
-                                    width: 10,
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(5)),
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    );
-                  })),
-                ),
-              ),
               SizedBox(
                 height: 20,
               ),
@@ -365,7 +277,8 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () async {
                             listsong = [];
-                            songs[index+10]['songs'] = await getSonglist(listsong, songs[index+10]['title']);
+                            songs[index + 10]['songs'] = await getSonglist(
+                                listsong, songs[index + 10]['title']);
                             Navigator.push(
                                 context,
                                 PageTransition(
@@ -384,7 +297,8 @@ class _HomePageState extends State<HomePage> {
                                 height: 180,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image: NetworkImage(songs[index+10]['img']),
+                                        image: NetworkImage(
+                                            songs[index + 10]['img']),
                                         fit: BoxFit.cover),
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(10)),
@@ -393,7 +307,7 @@ class _HomePageState extends State<HomePage> {
                                 height: 20,
                               ),
                               Text(
-                                songs[index+10]['title'],
+                                songs[index + 10]['title'],
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
@@ -405,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                               Container(
                                 width: 180,
                                 child: Text(
-                                  songs[index+10]['description'],
+                                  songs[index + 10]['description'],
                                   maxLines: 1,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -425,57 +339,11 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           SizedBox(
-            height: 10,
+            height: 15,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30, top: 20),
-                  child: Row(
-                      children: List.generate(song_type_2.length, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 25),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            activeMenu4 = index;
-                          });
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              song_type_2[index],
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: activeMenu4 == index ? Colors.green : Colors.grey,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            activeMenu4 == index
-                                ? Container(
-                                    width: 10,
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.green,
-                                        borderRadius: BorderRadius.circular(5)),
-                                  )
-                                : Container()
-                          ],
-                        ),
-                      ),
-                    );
-                  })),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Padding(
@@ -487,7 +355,8 @@ class _HomePageState extends State<HomePage> {
                         child: GestureDetector(
                           onTap: () async {
                             listsong = [];
-                            songs[index+15]['songs'] = await getSonglist(listsong, songs[index+15]['title']);
+                            songs[index + 15]['songs'] = await getSonglist(
+                                listsong, songs[index + 15]['title']);
                             Navigator.push(
                                 context,
                                 PageTransition(
@@ -506,8 +375,8 @@ class _HomePageState extends State<HomePage> {
                                 height: 180,
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image:
-                                            NetworkImage(songs[index + 15]['img']),
+                                        image: NetworkImage(
+                                            songs[index + 15]['img']),
                                         fit: BoxFit.cover),
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(10)),

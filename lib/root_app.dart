@@ -8,10 +8,8 @@ class RootApp extends StatefulWidget {
   final List userData;
   final List rankingData;
 
-  RootApp({Key? key,
-  required this.userData,
-  required this.rankingData})
-  :super(key: key);
+  RootApp({Key? key, required this.userData, required this.rankingData})
+      : super(key: key);
 
   @override
   _RootAppState createState() => _RootAppState();
@@ -35,7 +33,7 @@ class _RootAppState extends State<RootApp> {
 
   Widget getBody() {
     bool firstState = true;
-    if(firstState){
+    if (firstState) {
       setState(() {
         userData = widget.userData;
       });
@@ -58,38 +56,36 @@ class _RootAppState extends State<RootApp> {
       Icons.supervisor_account_sharp
     ];
     return Container(
-      height: 80,
+      height: 70,
       decoration: BoxDecoration(color: Colors.black),
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
+        padding: const EdgeInsets.only(left: 30, right: 30),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children:
-            List.generate(items.length, (index) {
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(items.length, (index) {
               return IconButton(
-                icon: Icon(
-                  items[index],
-                  color: activeTab == index ? Colors.green :Colors.white,
-                ),
-                onPressed: () async {
-                  setState(() {
-                    activeTab = index;
-                  });
-                  if(index==1) {
-                    rankingData = await fb_connect().loadRanking();
-                  }else if(index==2) {
+                  icon: Icon(
+                    items[index],
+                    color: activeTab == index ? Colors.green : Colors.white,
+                  ),
+                  onPressed: () async {
                     setState(() {
-                      userData = widget.userData;
+                      activeTab = index;
                     });
-                    if(userData[0]['songs_count']>0){
-                      userData[0]['songs'] = await fb_connect().fetchingSongList(userData[0]['userName']);
+                    if (index == 1) {
+                      rankingData = await fb_connect().loadRanking();
+                    } else if (index == 2) {
+                      setState(() {
+                        userData = widget.userData;
+                      });
+                      if (userData[0]['songs_count'] > 0) {
+                        userData[0]['songs'] = await fb_connect()
+                            .fetchingSongList(userData[0]['userName']);
+                      }
                     }
-                  }
-                }
-              );
-            })
-        ),
+                  });
+            })),
       ),
     );
   }

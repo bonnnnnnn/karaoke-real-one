@@ -1,24 +1,20 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/pages/ranking/Screen-profile/Profile_Page.dart';
 import 'package:karaoke_real_one/fb_connect.dart';
-import 'package:karaoke_real_one/pages/ranking/karaoke_search_ranking.dart';
 
-class KaraokeRanking extends StatefulWidget {
+class KaraokeSearchRanking extends StatefulWidget {
   final List usersRanking;
+  final int index;
 
-  const KaraokeRanking({Key? key, required this.usersRanking})
+  const KaraokeSearchRanking({Key? key, required this.usersRanking, required this.index})
       : super(key: key);
 
   @override
-  State<KaraokeRanking> createState() => _KaraokeRankingState();
+  State<KaraokeSearchRanking> createState() => _KaraokeSearchRankingState();
 }
 
-class _KaraokeRankingState extends State<KaraokeRanking> {
+class _KaraokeSearchRankingState extends State<KaraokeSearchRanking> {
   final TextEditingController textController = TextEditingController();
 
   @override
@@ -41,51 +37,27 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Top 50 Ranking",
+              "Search Ranking",
               style: TextStyle(
                   fontSize: 20,
                   color: Colors.green,
                   fontWeight: FontWeight.bold),
             ),
-            searchIcon(),
+            arrowBackIcon(),
           ],
         ),
       ),
     );
   }
 
-  Widget searchIcon() {
-    return AnimSearchBar(
-      width: 215,
-      textController: 
-        textController
-          ..addListener(() { 
-            new Timer(const Duration(seconds: 5),(){
-              String textSearch = textController.text;
-              for(int i=0;i<widget.usersRanking.length;i++){
-                List userData = [widget.usersRanking[widget.usersRanking.length - i - 1]];
-                if(userData[0]['userName'].toString().toLowerCase() == textSearch.toLowerCase()){
-                  textController.clear();
-                  Navigator.push(context, PageTransition(
-                    alignment: Alignment.bottomCenter,
-                    child: KaraokeSearchRanking(usersRanking: userData, index: i),
-                    type: PageTransitionType.scale)
-                  );
-                  break;
-                }
-              }
-            });
-          }),
-      onSuffixTap: () {
-        setState(() {
-          textController.clear();
-        });
+  Widget arrowBackIcon() {
+    return IconButton(
+      icon: Icon(
+        Icons.arrow_back_ios,
+        color: Colors.white),
+      onPressed: () {
+        Navigator.pop(context);
       },
-      color: Colors.white24,
-      helpText: "Search User",
-      autoFocus: true,
-      closeSearchOnSuffixTap: true,
-      animationDurationInMilli: 600,
     );
   }
 

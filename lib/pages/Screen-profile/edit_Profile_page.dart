@@ -3,6 +3,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:karaoke_real_one/pages/Screen-Profile/profile_widget.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -38,7 +40,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.black,
         appBar: AppBar(
-          title: Text('EditProfile'),
+          title: Text(
+            "Edit Profile",
+            style: TextStyle(
+                fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
+          ),
           leading: BackButton(),
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -51,7 +57,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
             child: Column(
               children: [
-                const SizedBox(height: 100),
+                const SizedBox(height: 120),
                 if (pickedFile == null)
                   Container(
                     child: noImage(),
@@ -118,7 +124,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget uploadFileBtn() {
     return ElevatedButton(
       child: Text('Upload Image'),
-      onPressed: (){},
+      onPressed: () async {
+        await uploadfile("userName");
+      },
     );
   }
 
@@ -190,5 +198,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: Text('UPDATE'),
       onPressed: () {},
     );
+  }
+
+  Future uploadfile(String userName)async{
+    final storageRef = FirebaseStorage.instance.ref();
+    final mountainsRef = storageRef.child("users_img/"+userName+"-profile-pics.jpg");
+    File myPics = File(pickedFile!.path!);
+    try {
+      await mountainsRef.putFile(myPics);
+    } catch (e) { }
+
   }
 }

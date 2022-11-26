@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 class fb_connect {
 
   Future loadSong(List listsong, String songname) async {
+    List listsong = [];
     DatabaseReference ref = FirebaseDatabase.instance.ref();
     final snapshot = await ref.child("Songs").orderByChild("title").equalTo(songname).get();
     if (snapshot.exists) {

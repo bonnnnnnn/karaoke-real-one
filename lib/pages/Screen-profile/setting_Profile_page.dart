@@ -37,7 +37,9 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          'Setting',
+          "Setting",
+          style: TextStyle(
+              fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(

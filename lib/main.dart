@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:karaoke_real_one/Screen-login/LoginPage.dart';
 import 'package:karaoke_real_one/root_app.dart';
 import 'package:karaoke_real_one/fb_connect.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -50,46 +50,50 @@ class _HomePage extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(
-            primaryColor: Color.fromARGB(255, 0, 255, 8),
-            dividerColor: Colors.white),
-        debugShowCheckedModeBanner: false,
-        home: Home(),
+      theme: ThemeData(primaryColor: Colors.black, dividerColor: Colors.white),
+      debugShowCheckedModeBanner: false,
+      home: Home(),
     );
   }
 
   Widget Home() {
     final user = FirebaseAuth.instance.currentUser;
     final nextroute;
-    if(user != null ){
+    if (user != null) {
       loaduser(user.uid);
-      if(!userData.isEmpty) {
+      if (!userData.isEmpty) {
         fetchingSongList(userData[0]['userName']);
         userData[0]['songs'] = userSongs;
-        if(!userSongs.isEmpty && userData[0]['songs_count'] > 0){
-          nextroute =  RootApp(userData: userData, rankingData: usersRanking);
-        }else if(userSongs.isEmpty && userData[0]['songs_count'] == 0){
+        if (!userSongs.isEmpty && userData[0]['songs_count'] > 0) {
+          nextroute = RootApp(userData: userData, rankingData: usersRanking);
+        } else if (userSongs.isEmpty && userData[0]['songs_count'] == 0) {
           userData[0]['songs'] = [];
           nextroute = RootApp(userData: userData, rankingData: usersRanking);
-        }else{
+        } else {
           nextroute = MaterialApp(
             theme: ThemeData(
-            primaryColor: Color.fromARGB(255, 0, 255, 8),
-            dividerColor: Colors.white),
+                primaryColor: Colors.black, dividerColor: Colors.white),
             debugShowCheckedModeBanner: false,
           );
         }
       } else {
-        nextroute = MaterialApp(
-          theme: ThemeData(
-          primaryColor: Color.fromARGB(255, 0, 255, 8),
-          dividerColor: Colors.white),
-          debugShowCheckedModeBanner: false,
-        );
+        nextroute = loadScreen();
       }
-    }else{
+    } else {
       nextroute = LoginPage();
     }
     return nextroute;
+  }
+
+  Widget loadScreen() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: LoadingAnimationWidget.staggeredDotsWave(
+          color: Color.fromARGB(255, 0, 255, 8),
+          size: 200,
+        ),
+      ),
+    );
   }
 }
