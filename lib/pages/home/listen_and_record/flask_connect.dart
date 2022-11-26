@@ -21,5 +21,6 @@ class flask_connect {
     var responsed = await http.Response.fromStream(response);
     final responseData = await json.decode(responsed.body);
     String message = responseData['message'];
+    return message;
   }
 }

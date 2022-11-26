@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_seekbar.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:record/record.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/flask_connect.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
-import 'package:karaoke_real_one/pages/home/listen_and_record/const.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 flask_connect flask = new flask_connect();
@@ -19,6 +20,7 @@ class Singing extends StatefulWidget {
   final String songname;
   final List userData;
   final int index;
+  final String normallyrics;
 
   const Singing(
       {Key? key,
@@ -26,7 +28,8 @@ class Singing extends StatefulWidget {
       required this.img,
       required this.songname,
       required this.userData,
-      required this.index})
+      required this.index,
+      required this.normallyrics})
       : super(key: key);
 
   @override
@@ -62,7 +65,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
         .listen((amp) => setState(() => _amplitude = amp));
 
     lyricModel = LyricsModelBuilder.create()
-        .bindLyricToMain(normalLyric[widget.index])
+        .bindLyricToMain(widget.normallyrics)
         // .bindLyricToExt(transLyric)
         .getModel();
 
@@ -98,22 +101,40 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   Future<void> _stop(bool complete) async {
     _timer?.cancel();
     _recordDuration = 0;
+    String msg;
 
     var path = null;
     path = await _audioRecorder.stop();
 
     if (complete) {
-      Timer(Duration(seconds: 1),() async {
-        _btnController1.reset();
-        await flask.upload(path.toString(), widget.index.toString(),
-          widget.userData[0]['userName'], widget.songname);
-      });
+      msg = await flask.upload(path.toString(), widget.index.toString(), widget.userData[0]['userName'], widget.songname);
     }
 
-    // print(path.toString());
-    // print(widget.index.toString());
-    // print(widget.userData[0]['userName']);
-    // print(widget.songname);
+  }
+
+  Widget myMainBody(bool complete) {
+    return 
+      FutureBuilder(
+        future: _stop(complete),
+        builder:(context, snapshot){
+          if(snapshot.connectionState != ConnectionState.done){
+            return loadScreen();
+          }
+          return MaterialApp();
+        }, 
+      );
+  }
+
+  Widget loadScreen() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: LoadingAnimationWidget.staggeredDotsWave(
+          color: Color.fromARGB(255, 0, 255, 8),
+          size: 200,
+        ),
+      ),
+    );
   }
 
   Future<void> _pause() async {
@@ -343,9 +364,16 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                               });
                               audioPlayer?.onPlayerComplete.listen((event) {
                                 setState(() {
-                                  _stop(true);
                                   playProgress = 0;
                                 });
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    alignment: Alignment.bottomCenter,
+                                    child: myMainBody(true),
+                                    type: PageTransitionType.scale
+                                  )
+                                );
                               });
                             } else {
                               audioPlayer?.resume();

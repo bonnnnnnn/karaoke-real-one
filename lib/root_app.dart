@@ -7,8 +7,9 @@ import 'package:karaoke_real_one/fb_connect.dart';
 class RootApp extends StatefulWidget {
   final List userData;
   final List rankingData;
+  final List appSongs;
 
-  RootApp({Key? key, required this.userData, required this.rankingData})
+  RootApp({Key? key, required this.userData, required this.rankingData, required this.appSongs})
       : super(key: key);
 
   @override
@@ -21,6 +22,7 @@ class _RootAppState extends State<RootApp> {
   List userData = [];
   List rankingData = [];
   List userSongs = [];
+  List appSongs = [];
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +38,15 @@ class _RootAppState extends State<RootApp> {
     if (firstState) {
       setState(() {
         userData = widget.userData;
+        rankingData = widget.rankingData;
+        appSongs = widget.appSongs;
       });
       firstState = false;
     }
     return IndexedStack(
       index: activeTab,
       children: [
-        HomePage(userData: userData),
+        HomePage(userData: userData, songs: appSongs),
         KaraokeRanking(usersRanking: rankingData),
         ProfilePage(userData: userData)
       ],
@@ -76,9 +80,9 @@ class _RootAppState extends State<RootApp> {
                     if (index == 1) {
                       rankingData = await fb_connect().loadRanking();
                     } else if (index == 2) {
-                      setState(() {
-                        userData = widget.userData;
-                      });
+                      // setState(() {
+                      //   userData = widget.userData;
+                      // });
                       if (userData[0]['songs_count'] > 0) {
                         userData[0]['songs'] = await fb_connect()
                             .fetchingSongList(userData[0]['userName']);

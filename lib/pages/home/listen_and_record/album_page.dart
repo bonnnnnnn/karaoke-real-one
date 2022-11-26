@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/music_detail_page.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_singing.dart';
@@ -62,6 +63,7 @@ class _AlbumPageState extends State<AlbumPage> {
                       ],
                     ),
                     onPressed: () async {
+                      final String normallyrics = await fb_connect().getSongLyrics(widget.index);
                       Navigator.push(
                         context,
                         PageTransition(
@@ -72,6 +74,7 @@ class _AlbumPageState extends State<AlbumPage> {
                               songname: widget.song['title'],
                               userData: widget.userData,
                               index: widget.index,
+                              normallyrics: normallyrics,
                             ),
                             type: PageTransitionType.scale),
                       );
@@ -133,7 +136,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                     alignment: Alignment.bottomCenter,
                                     child: MusicDetailPage(
                                       title: widget.song['title'],
-                                      color: widget.song['color'],
+                                      color: Colors.black,
                                       description: widget.song['description'],
                                       img: widget.song['img'],
                                       songUrl: widget.song['song_url'],
@@ -253,7 +256,7 @@ class _AlbumPageState extends State<AlbumPage> {
                               alignment: Alignment.bottomCenter,
                               child: MusicDetailPage(
                                 title: songAlbums[index]['title'],
-                                color: widget.song['color'],
+                                color: Colors.black,
                                 description: widget.song['description'],
                                 img: songAlbums[index]['img'],
                                 songUrl: songAlbums[index]['song_url'],
