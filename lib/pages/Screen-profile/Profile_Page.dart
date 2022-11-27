@@ -1,9 +1,13 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:karaoke_real_one/pages/Screen-profile/profile_widget.dart';
 import 'package:karaoke_real_one/pages/Screen-profile/setting_Profile_page.dart';
 import 'package:karaoke_real_one/pages/Screen-profile/edit_Profile_page.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/music_detail_page.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 class ProfilePage extends StatefulWidget {
   final List userData;
@@ -15,6 +19,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  List lastTenSong = [];
+  List mostScore = [];
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -90,10 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      'data1',
-                      style: TextStyle(color: Colors.green, fontSize: 16),
-                    ),
+                    child: buildList1()
                   ),
                 ),
                 Padding(
@@ -105,10 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      'data2',
-                      style: TextStyle(color: Colors.green, fontSize: 16),
-                    ),
+                    child: buildList2()
                   ),
                 ),
               ],
@@ -139,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
             IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.push(this.context, MaterialPageRoute(builder: (context) {
                   return SettingProfilePage();
                 }));
               },
@@ -155,9 +155,9 @@ class _ProfilePageState extends State<ProfilePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         buildButton(
-            context, widget.userData[0]['songs_count'].toString(), 'Singing'),
+            this.context, widget.userData[0]['songs_count'].toString(), 'Singing'),
         buildDivider(),
-        buildButton(context, widget.userData[0]['stars'].toString(), 'Stars'),
+        buildButton(this.context, widget.userData[0]['stars'].toString(), 'Stars'),
       ],
     );
   }
@@ -192,35 +192,43 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ));
 
-  Widget getList() {
-    var size = MediaQuery.of(context).size;
+  Widget getList1(List songList) {
+    var size = MediaQuery.of(this.context).size;
     return SingleChildScrollView(
       padding: EdgeInsets.only(left: 30, right: 30, bottom: 0),
-      child: Stack(
+      child: Column(
         children: [
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30, bottom: 0),
+                padding: const EdgeInsets.only(left: 0, right: 0, bottom: 0),
                 child: Row(
                   children: [
                     SizedBox(
-                      width: (size.width - 60) * 0.70,
+                      width: (size.width - 60) * 0.57,
                       child: Text(
                         "#  " +
-                        "Name",
+                        "Song - Name",
                         style: TextStyle(
                         color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
-                      width: (size.width - 60) * 0.30,
+                      width: (size.width - 60) * 0.33,
                       height: 40,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Total Stars",
+                            "Datetime",
+                            style: TextStyle(
+                              color: Colors.yellow.withOpacity(0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          Text(
+                            "Stars",
                             style: TextStyle(
                               color: Colors.yellow.withOpacity(0.8),
                               fontSize: 14,
@@ -236,22 +244,22 @@ class _ProfilePageState extends State<ProfilePage> {
             ]
           ),
           Column(
-            children: List.generate(songAlbums.length, (index) {
+            children: List.generate(songList.length<10? songList.length : 10, (index) {
               return Padding(
                 padding:
-                  const EdgeInsets.only(left: 30, right: 30, bottom: 10),
+                  const EdgeInsets.only(left: 0, right: 0, bottom: 10),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
-                      context,
+                      this.context,
                       PageTransition(
                         alignment: Alignment.bottomCenter,
                         child: MusicDetailPage(
-                          title: songAlbums[index]['title'],
+                          title: songList[songList.length-index-1]['title'],
                           color: Colors.black,
-                          description: widget.song['description'],
-                          img: songAlbums[index]['img'],
-                          songUrl: songAlbums[index]['song_url'],
+                          description: "",
+                          img: songList[songList.length-index-1]['img'],
+                          songUrl: songList[songList.length-index-1]['song_url'],
                         ),
                         type: PageTransitionType.scale
                       )
@@ -260,34 +268,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Row(
                     children: [
                       Container(
-                        width: (size.width - 60) * 0.77,
+                        width: (size.width - 60) * 0.57,
                         child: Text(
                           "${index + 1}  " +
-                          songAlbums[index]['title'] +
+                          songList[songList.length-index-1]['title'] +
                           " - " +
-                          songAlbums[index]['userName'],
+                          songList[songList.length-index-1]['userName'],
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
                       Container(
-                        width: (size.width - 60) * 0.23,
+                        width: (size.width - 60) * 0.33,
                         height: 50,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: List.generate(songAlbums[index]['stars'], (index){
-                            return Container(
-                              width: 25,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.orange.shade400,
-                              ),
-                              child: Icon(
-                                Icons.star,
-                                color: Colors.red,
-                               )
-                            );
-                          })
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              songList[songList.length-index-1]['date'].toString().substring(0,19),
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Row(
+                              children: List.generate(songList[songList.length-index-1]['stars'], (index){
+                              return Container(
+                                width: 25,
+                                height: 25,
+                                child: Icon(
+                                  Icons.star,
+                                  color: Colors.green,
+                                )
+                              );
+                            }))
+                          ]
                         ),
                       ),
                     ],
@@ -298,6 +309,170 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       )          
+    );
+  }
+
+  Widget getList2(List songList) {
+    var size = MediaQuery.of(this.context).size;
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(left: 30, right: 30, bottom: 0),
+      child: Column(
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 0, right: 0, bottom: 0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: (size.width - 60) * 0.57,
+                      child: Text(
+                        "#  " +
+                        "Song - Name",
+                        style: TextStyle(
+                        color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      width: (size.width - 60) * 0.33,
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Datetime",
+                            style: TextStyle(
+                              color: Colors.yellow.withOpacity(0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          Text(
+                            "Stars",
+                            style: TextStyle(
+                              color: Colors.yellow.withOpacity(0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ]
+          ),
+          Column(
+            children: List.generate(songList.length<10? songList.length : 10, (index) {
+              return Padding(
+                padding:
+                  const EdgeInsets.only(left: 0, right: 0, bottom: 10),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      this.context,
+                      PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        child: MusicDetailPage(
+                          title: songList[index]['title'],
+                          color: Colors.black,
+                          description: "",
+                          img: songList[index]['img'],
+                          songUrl: songList[index]['song_url'],
+                        ),
+                        type: PageTransitionType.scale
+                      )
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: (size.width - 60) * 0.57,
+                        child: Text(
+                          "${index + 1}  " +
+                          songList[index]['title'] +
+                          " - " +
+                          songList[index]['userName'],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      Container(
+                        width: (size.width - 60) * 0.33,
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              songList[index]['date'].toString().substring(0,19),
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Row(
+                              children: List.generate(songList[index]['stars'], (index){
+                              return Container(
+                                width: 25,
+                                height: 25,
+                                child: Icon(
+                                  Icons.star,
+                                  color: Colors.green,
+                                )
+                              );
+                            }))
+                          ]
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            })
+          )
+        ],
+      )          
+    );
+  }
+
+  Widget buildList1(){
+    return FutureBuilder(
+      future: getLastTenSong(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState != ConnectionState.done){
+          return loadScreen();
+        }
+        return getList1(lastTenSong);
+        },
+      );
+  }
+
+  Widget buildList2(){
+    return FutureBuilder(
+      future: getSongMostScore(),
+      builder: (context, snapshot) {
+        if(snapshot.hasData){
+          return loadScreen();
+        }
+        return getList2(mostScore);
+        },
+      );
+  }
+
+  Future getLastTenSong() async {
+    lastTenSong = await fb_connect().getLastTenSong(widget.userData[0]['userName']);
+  }
+
+  Future getSongMostScore() async {
+    mostScore = await fb_connect().getSongMostScore(widget.userData[0]['userName']);
+  }
+
+  Widget loadScreen() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: LoadingAnimationWidget.staggeredDotsWave(
+          color: Color.fromARGB(255, 0, 255, 8),
+          size: 200,
+        ),
+      ),
     );
   }
 }

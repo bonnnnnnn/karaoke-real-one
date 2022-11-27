@@ -216,9 +216,9 @@ class _MusicDetailPageState extends State<MusicDetailPage> with SingleTickerProv
                                     playing = state == PlayerState.playing;
                                   });
                                 });
-                              } else {
+                              } else if(isPlaying==false && firstTimePlay==false) {
                                 audioPlayer?.resume();
-                                setState((){
+                                setState(() {
                                   isPlaying = true;
                                 });
                               }

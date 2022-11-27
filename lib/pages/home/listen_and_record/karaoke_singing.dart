@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/karaoke_seekbar.dart';
 import 'package:flutter/foundation.dart';
+import 'package:karaoke_real_one/pages/home/listen_and_record/music_detail_page.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:record/record.dart';
 import 'package:karaoke_real_one/pages/home/listen_and_record/flask_connect.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:karaoke_real_one/fb_connect.dart';
 
 flask_connect flask = new flask_connect();
 
@@ -120,9 +122,32 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
           if(snapshot.connectionState != ConnectionState.done){
             return loadScreen();
           }
-          return MaterialApp();
-        }, 
+          return myNewBody();
+        }
       );
+  }
+
+  Future loadSong (List newestSong) async {
+    newestSong = await fb_connect().getLastTenSong(widget.userData[0]['userName']);
+  }
+
+  Widget myNewBody(){
+    List newestSong = [];
+    return FutureBuilder(
+      future: loadSong(newestSong),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState != ConnectionState.done){
+            return loadScreen();
+        }
+        return MusicDetailPage(
+            title: newestSong[0]['title'], 
+            description: "", 
+            color: Colors.black, 
+            img: newestSong[0]['img'], 
+            songUrl: newestSong[0]['song_url']
+        );
+      }
+    );
   }
 
   Widget loadScreen() {
@@ -382,7 +407,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
                                   )
                                 );
                               });
-                            } else {
+                            } else if(isPlaying==false && firstTimePlay==false) {
                               audioPlayer?.resume();
                               setState(() {
                                 isPlaying = true;

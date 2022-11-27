@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:karaoke_real_one/pages/Screen-Profile/profile_widget.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -131,10 +132,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
       fullWidthButton: true,
       shape: GFButtonShape.pills,
       text: "Upload Image",
-      onPressed: () {},
-      // () async {
-      //   await uploadfile("userName");
-      // },
+      onPressed: () async {
+        if(pickedFile != null){
+          await uploadfile("userName");
+        }else{
+          showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Stack(children: [
+              Text('Pls select your new Profile picture!'),
+            ]));
+          });
+        }
+      },
     );
   }
 
@@ -204,7 +215,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget bulidUpdateBtn() {
     return ElevatedButton(
       child: Text('UPDATE'),
-      onPressed: () {},
+      onPressed: () async {
+        if(_userNameController.text.trim().isNotEmpty){
+          await updateUserName(_userNameController.text.trim());
+          _userNameController.clear();
+          showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Stack(children: [
+              Text('Changing username is successed!'),
+            ]));
+          });
+        }else{
+          showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              content: Stack(children: [
+              Text('Please enter your new Username!'),
+            ]));
+          });
+        }
+      },
     );
   }
 
@@ -216,5 +249,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       await mountainsRef.putFile(myPics);
     } catch (e) {}
+    String img_url = storageRef.child("users_img/" + userName + "-profile-pics.jpg").getDownloadURL().toString();
+    await updatePics(img_url);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Stack(children: [
+            Text('Changing profile picture is successed!'),
+          ]));
+    });
+  }
+
+  Future updatePics(String img) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    String msg = await fb_connect().updatePics(user.uid, img);
+  }
+
+  Future updateUserName(String userName) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    String msg = await fb_connect().updateUserName(user.uid, userName);
   }
 }

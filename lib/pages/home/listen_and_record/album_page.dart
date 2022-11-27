@@ -216,7 +216,7 @@ class _AlbumPageState extends State<AlbumPage> {
                           width: (size.width - 60) * 0.70,
                           child: Text(
                             "#  " +
-                            "Name",
+                            "Song - Name",
                           style: TextStyle(
                           color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
                           ),
@@ -228,7 +228,7 @@ class _AlbumPageState extends State<AlbumPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "Total Stars",
+                                "Stars",
                                 style: TextStyle(
                                   color: Colors.yellow.withOpacity(0.8),
                                   fontSize: 14,
@@ -284,13 +284,9 @@ class _AlbumPageState extends State<AlbumPage> {
                               return Container(
                                 width: 25,
                                 height: 25,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.orange.shade400,
-                                ),
                                 child: Icon(
                                   Icons.star,
-                                  color: Colors.red,
+                                  color: Colors.green,
                                   )
                               );
                             })

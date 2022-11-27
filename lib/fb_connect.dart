@@ -1,4 +1,8 @@
+import 'dart:js';
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class fb_connect {
 
@@ -11,7 +15,6 @@ class fb_connect {
         listsong.add(key.value);
       }
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return listsong;
   }
 
@@ -22,7 +25,6 @@ class fb_connect {
     if (snapshot.exists) {
       userData.add(snapshot.value);
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return userData;
   }
 
@@ -35,7 +37,6 @@ class fb_connect {
         usersranking.add(key.value);
       }
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return usersranking;
   }
 
@@ -48,7 +49,6 @@ class fb_connect {
         listSong.add(key.value);
       }
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return listSong;
   }
 
@@ -61,7 +61,6 @@ class fb_connect {
         songList.add(key.value);
       }
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return songList;
   }
 
@@ -74,18 +73,55 @@ class fb_connect {
         Lyrics = Lyrics + line.value.toString() + '\n';
       }
     }
-    Future.delayed(const Duration(seconds: 1), () => "1");
     return Lyrics;
   }
 
-  void writeData() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref("Instruments/123");
-    await ref.set({
-      "name": "John",
-      "age": 18,
-      "address": {
-        "line1": "100 Mountain View"
+  Future getSongMostScore(String userName) async {
+    List songList = [];
+    List tempList = [];
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child("userSongs").orderByChild("userName").equalTo(userName).get();
+    if(snapshot.exists){
+      for(final key in snapshot.children){
+        songList.add(key.value);
       }
+    }
+    for(int i=3;i>=0;i--){
+      for(int j=songList.length-1; j>=0;j--){
+        if(songList[j]['stars']==i){
+          tempList.add(songList[j]);
+        }
+      }
+    }
+    songList = tempList;
+    return songList;
+  }
+
+  Future getLastTenSong(String userName) async {
+    List songList = [];
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    final snapshot = await ref.child("userSongs").orderByChild("userName").equalTo(userName).get();
+    if(snapshot.exists){
+      for(final key in snapshot.children){
+        songList.add(key.value);
+      }
+    }
+    return songList;
+  }
+
+  Future updatePics(String userUID, String img) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("Users/"+userUID);
+    await ref.update({
+      "img": img,
     });
+    return "Update Success!";
+  }
+
+  Future updateUserName(String userUID, String userName) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("Users/"+userUID);
+    await ref.update({
+      "img": userName,
+    });
+    return "Update Success!";
   }
 }
