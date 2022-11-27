@@ -50,6 +50,7 @@ dependencies:
   file_picker: ^5.2.2
   firebase_storage: ^11.0.6
   loading_animation_widget: ^1.2.0+3
+  getwidget: ^3.0.1
 
 dev_dependencies:
   flutter_test:

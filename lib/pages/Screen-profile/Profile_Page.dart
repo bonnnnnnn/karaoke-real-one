@@ -193,75 +193,111 @@ class _ProfilePageState extends State<ProfilePage> {
           ));
 
   Widget getList() {
-    List userSongs = widget.userData[0]['songs'];
+    var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
+      padding: EdgeInsets.only(left: 30, right: 30, bottom: 0),
+      child: Stack(
         children: [
-          Text("USER LIST SONG"),
-          Row(
-            children: List.generate(userSongs.length, (index) {
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30, bottom: 0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: (size.width - 60) * 0.70,
+                      child: Text(
+                        "#  " +
+                        "Name",
+                        style: TextStyle(
+                        color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      width: (size.width - 60) * 0.30,
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Total Stars",
+                            style: TextStyle(
+                              color: Colors.yellow.withOpacity(0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ]
+          ),
+          Column(
+            children: List.generate(songAlbums.length, (index) {
               return Padding(
-                padding: EdgeInsets.only(right: 15),
+                padding:
+                  const EdgeInsets.only(left: 30, right: 30, bottom: 10),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        PageTransition(
-                            alignment: Alignment.bottomCenter,
-                            child: MusicDetailPage(
-                              title: userSongs[index]['title'],
-                              description: "",
-                              color: Colors.black,
-                              img: userSongs[index]['img'],
-                              songUrl: userSongs[index]['song_url'],
-                            ),
-                            type: PageTransitionType.scale));
+                      context,
+                      PageTransition(
+                        alignment: Alignment.bottomCenter,
+                        child: MusicDetailPage(
+                          title: songAlbums[index]['title'],
+                          color: Colors.black,
+                          description: widget.song['description'],
+                          img: songAlbums[index]['img'],
+                          songUrl: songAlbums[index]['song_url'],
+                        ),
+                        type: PageTransitionType.scale
+                      )
+                    );
                   },
-                  child: Column(children: [
-                    Container(
-                      width: 180,
-                      height: 180,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(userSongs[index]['img']),
-                            fit: BoxFit.cover,
-                          ),
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      userSongs[index]['title'],
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                      width: 100,
-                      child: Text(
-                        "",
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: (size.width - 60) * 0.77,
+                        child: Text(
+                          "${index + 1}  " +
+                          songAlbums[index]['title'] +
+                          " - " +
+                          songAlbums[index]['userName'],
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    )
-                  ]),
+                      Container(
+                        width: (size.width - 60) * 0.23,
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: List.generate(songAlbums[index]['stars'], (index){
+                            return Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.orange.shade400,
+                              ),
+                              child: Icon(
+                                Icons.star,
+                                color: Colors.red,
+                               )
+                            );
+                          })
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
-            }),
+            })
           )
         ],
-      ),
+      )          
     );
   }
 }

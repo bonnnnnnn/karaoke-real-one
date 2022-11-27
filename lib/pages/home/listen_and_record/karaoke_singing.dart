@@ -175,7 +175,14 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
 
   bool useEnhancedLrc = false;
   var lyricModel;
-  var lyricUI = UINetease(defaultSize: 30, lineGap: 30, highlight: false);
+  var lyricUI = UINetease(
+    otherMainSize: 16,
+    defaultExtSize: 8,
+    defaultSize: 32,
+    lineGap: 40,
+    inlineGap: 5,
+    highlight: false,
+  );
 
   Stream<SeekBarData> get _seekBarDataSteam =>
       rxdart.Rx.combineLatest2<Duration, Duration, SeekBarData>(
@@ -190,7 +197,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar(),
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       body: buildBody(),
     );
   }
@@ -198,7 +205,7 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
   AppBar getAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.black.withOpacity(0.2),
+      backgroundColor: Colors.black.withOpacity(0.5),
       elevation: 0,
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios),

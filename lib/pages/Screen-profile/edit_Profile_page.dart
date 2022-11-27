@@ -5,6 +5,7 @@ import 'package:karaoke_real_one/pages/Screen-Profile/profile_widget.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:karaoke_real_one/fb_connect.dart';
+import 'package:getwidget/getwidget.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -19,6 +20,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+
+  final result = FilePicker.platform.pickFiles();
 
   @override
   void dispose() {
@@ -122,11 +125,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget uploadFileBtn() {
-    return ElevatedButton(
-      child: Text('Upload Image'),
-      onPressed: () async {
-        await uploadfile("userName");
-      },
+    return GFButton(
+      color: Colors.green,
+      blockButton: false,
+      fullWidthButton: true,
+      shape: GFButtonShape.pills,
+      text: "Upload Image",
+      onPressed: () {},
+      // () async {
+      //   await uploadfile("userName");
+      // },
     );
   }
 
@@ -200,13 +208,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Future uploadfile(String userName)async{
+  Future uploadfile(String userName) async {
     final storageRef = FirebaseStorage.instance.ref();
-    final mountainsRef = storageRef.child("users_img/"+userName+"-profile-pics.jpg");
+    final mountainsRef =
+        storageRef.child("users_img/" + userName + "-profile-pics.jpg");
     File myPics = File(pickedFile!.path!);
     try {
       await mountainsRef.putFile(myPics);
-    } catch (e) { }
-
+    } catch (e) {}
   }
 }
