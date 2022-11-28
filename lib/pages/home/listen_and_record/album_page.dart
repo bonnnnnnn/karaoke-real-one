@@ -244,7 +244,7 @@ class _AlbumPageState extends State<AlbumPage> {
                 ]
               ),
               Column(
-                  children: List.generate(songAlbums.length, (index) {
+                  children: List.generate(songAlbums.length<10? songAlbums.length: 10, (index) {
                 return Padding(
                   padding:
                       const EdgeInsets.only(left: 30, right: 30, bottom: 10),
@@ -272,7 +272,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                 songAlbums[index]['title'] +
                                 " - " +
                                 songAlbums[index]['userName'],
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
@@ -280,12 +280,12 @@ class _AlbumPageState extends State<AlbumPage> {
                           height: 50,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
-                            children: List.generate(songAlbums[index]['stars'], (index){
+                            children: List.generate(3, (index_stars){
                               return Container(
                                 width: 25,
                                 height: 25,
                                 child: Icon(
-                                  Icons.star,
+                                  2-index_stars>=songAlbums[index]['stars']? Icons.star_border : Icons.star,
                                   color: Colors.green,
                                   )
                               );

@@ -133,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
               "Profile",
               style: TextStyle(
                   fontSize: 20,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),
             IconButton(
@@ -208,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: (size.width - 60) * 0.57,
                       child: Text(
                         "#  " +
-                        "Song - Name",
+                        "Songname",
                         style: TextStyle(
                         color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
                       ),
@@ -217,16 +217,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: (size.width - 60) * 0.33,
                       height: 40,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            "Datetime",
-                            style: TextStyle(
-                              color: Colors.yellow.withOpacity(0.8),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
                           Text(
                             "Stars",
                             style: TextStyle(
@@ -269,31 +261,39 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Container(
                         width: (size.width - 60) * 0.57,
-                        child: Text(
-                          "${index + 1}  " +
-                          songList[songList.length-index-1]['title'] +
-                          " - " +
-                          songList[songList.length-index-1]['userName'],
-                          style: TextStyle(color: Colors.white),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${index + 1}  " +
+                                  songList[songList.length-index-1]['title'],
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  songList[songList.length-index-1]['date'].toString().substring(0,19),
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       Container(
                         width: (size.width - 60) * 0.33,
                         height: 50,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              songList[songList.length-index-1]['date'].toString().substring(0,19),
-                              style: TextStyle(color: Colors.grey),
-                            ),
                             Row(
-                              children: List.generate(songList[songList.length-index-1]['stars'], (index){
+                              children: List.generate(3, (index_stars){
                               return Container(
                                 width: 25,
                                 height: 25,
                                 child: Icon(
-                                  Icons.star,
+                                  2-index_stars>=songList[songList.length-index-1]['stars']?  Icons.star_border : Icons.star,
                                   color: Colors.green,
                                 )
                               );
@@ -328,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: (size.width - 60) * 0.57,
                       child: Text(
                         "#  " +
-                        "Song - Name",
+                        "Songname",
                         style: TextStyle(
                         color: Colors.yellow.withOpacity(0.8), fontWeight: FontWeight.bold),
                       ),
@@ -337,16 +337,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: (size.width - 60) * 0.33,
                       height: 40,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            "Datetime",
-                            style: TextStyle(
-                              color: Colors.yellow.withOpacity(0.8),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
                           Text(
                             "Stars",
                             style: TextStyle(
@@ -389,31 +381,39 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Container(
                         width: (size.width - 60) * 0.57,
-                        child: Text(
-                          "${index + 1}  " +
-                          songList[index]['title'] +
-                          " - " +
-                          songList[index]['userName'],
-                          style: TextStyle(color: Colors.white),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${index + 1}  " +
+                                  songList[index]['title'],
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  songList[index]['date'].toString().substring(0,19),
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ),
                       Container(
                         width: (size.width - 60) * 0.33,
                         height: 50,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              songList[index]['date'].toString().substring(0,19),
-                              style: TextStyle(color: Colors.grey),
-                            ),
                             Row(
-                              children: List.generate(songList[index]['stars'], (index){
+                              children: List.generate(3, (index_stars){
                               return Container(
                                 width: 25,
                                 height: 25,
                                 child: Icon(
-                                  Icons.star,
+                                  2-index_stars>=songList[index]['stars']?  Icons.star_border : Icons.star,
                                   color: Colors.green,
                                 )
                               );

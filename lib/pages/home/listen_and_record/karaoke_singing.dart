@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'dart:async';
+import 'package:alert/alert.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lyric/lyrics_reader.dart';
@@ -139,6 +140,19 @@ class _SingingState extends State<Singing> with SingleTickerProviderStateMixin {
         if(snapshot.connectionState != ConnectionState.done){
             return loadScreen();
         }
+        showDialog(
+          context: context, 
+          builder: (context){
+            return AlertDialog(
+              content: Stack(
+                children: [
+                  Text(
+                    'You got '+newestSong[0]['stars'].toString()+' star(s) for this singing!',
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  )
+                ]),
+            );
+          });
         return MusicDetailPage(
             title: newestSong[0]['title'], 
             description: "", 

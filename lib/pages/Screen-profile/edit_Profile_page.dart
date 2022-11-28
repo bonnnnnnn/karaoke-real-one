@@ -22,7 +22,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
-  final result = FilePicker.platform.pickFiles();
+  // final result = FilePicker.platform.pickFiles();
 
   @override
   void dispose() {
@@ -47,7 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           title: Text(
             "Edit Profile",
             style: TextStyle(
-                fontSize: 20, color: Colors.green, fontWeight: FontWeight.bold),
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           leading: BackButton(),
           backgroundColor: Colors.transparent,
@@ -249,8 +249,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       await mountainsRef.putFile(myPics);
     } catch (e) {}
-    String img_url = storageRef.child("users_img/" + userName + "-profile-pics.jpg").getDownloadURL().toString();
-    await updatePics(img_url);
+    final img_url = await storageRef.child("users_img/" + userName + "-profile-pics.jpg").getDownloadURL();
+    await updatePics(img_url.toString());
     showDialog(
       context: context,
       builder: (context) {

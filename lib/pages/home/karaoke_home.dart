@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
               "Pop Song",
               style: TextStyle(
                   fontSize: 20,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),
             searchIcon(),

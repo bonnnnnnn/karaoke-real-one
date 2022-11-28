@@ -120,7 +120,7 @@ class fb_connect {
   Future updateUserName(String userUID, String userName) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("Users/"+userUID);
     await ref.update({
-      "img": userName,
+      "userName": userName,
     });
     return "Update Success!";
   }

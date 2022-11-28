@@ -44,7 +44,7 @@ class _KaraokeRankingState extends State<KaraokeRanking> {
               "Top 50 Ranking",
               style: TextStyle(
                   fontSize: 20,
-                  color: Colors.green,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),
             searchIcon(),
